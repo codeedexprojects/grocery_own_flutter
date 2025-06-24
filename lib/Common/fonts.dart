@@ -28,3 +28,17 @@ TextStyle albertSansTextStyle({
     color: color,
   );
 }
+
+TextStyle interTextStyle({
+  double? fontSize,
+  FontWeight? fontWeight,
+  double? height,
+  Color? color,
+}) {
+  return GoogleFonts.inter(
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    height: height,
+    color: color,
+  );
+}
