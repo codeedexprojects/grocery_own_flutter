@@ -12,7 +12,7 @@ class OTPVerifyPage extends StatelessWidget {
 
   // Handle verify button press
   onVerifyPressed() {
-    Get.to(BottomBar());
+    Get.to(() => BottomBar());
     log("Verify button pressed");
   }
 

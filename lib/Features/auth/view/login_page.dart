@@ -12,7 +12,7 @@ class LoginPage extends StatelessWidget {
 
   // Handle continue button press
   void onContinuePressed() {
-    Get.to(OTPVerifyPage());
+    Get.to(() => OTPVerifyPage());
     log("Continue button pressed");
   }
 
@@ -78,7 +78,7 @@ class LoginPage extends StatelessWidget {
                 Image.asset("assets/icons/apple.png", height: 36.h),
               ],
             ),
-            SizedBox(height: 120.h),
+            SizedBox(height: 100.h),
 
             // Terms and Policy
             Center(

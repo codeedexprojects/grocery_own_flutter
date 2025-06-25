@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grocery/Common/app_bar.dart';
 import 'package:grocery/Common/colors.dart';
 import 'package:grocery/Common/fonts.dart';
+import 'package:grocery/Common/utils.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -327,11 +328,10 @@ class _CartPageState extends State<CartPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 25.h),
             Expanded(
               child: isLoading
                   ? ListView.separated(
-                      itemCount: 4,
+                      itemCount: 5,
                       separatorBuilder: (_, __) => SizedBox(height: 12.h),
                       itemBuilder: (_, __) => _buildShimmerItem(),
                     )
@@ -350,6 +350,7 @@ class _CartPageState extends State<CartPage> {
                       },
                     ),
             ),
+
             _buildTotalCheckout(total: 549),
           ],
         ),
@@ -362,85 +363,11 @@ class _CartPageState extends State<CartPage> {
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
       child: Container(
+        height: 100.h,
         padding: EdgeInsets.all(10.w),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.grey.shade300,
           borderRadius: BorderRadius.circular(5.r),
-        ),
-        child: Stack(
-          children: [
-            Row(
-              children: [
-                // Image Placeholder
-                Container(
-                  height: 80.h,
-                  width: 90.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5.r),
-                  ),
-                ),
-                SizedBox(width: 12.w),
-
-                // Text Placeholder
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 60.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 14.h,
-                          width: 100.w,
-                          color: Colors.white,
-                        ),
-                        SizedBox(height: 6.h),
-                        Container(
-                          height: 12.h,
-                          width: 60.w,
-                          color: Colors.white,
-                        ),
-                        SizedBox(height: 6.h),
-                        Container(
-                          height: 14.h,
-                          width: 50.w,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            // Top Right - Close Icon Placeholder
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                width: 20.sp,
-                height: 20.sp,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-
-            // Bottom Right - Quantity Box Placeholder
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                height: 30.h,
-                width: 70.w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -471,8 +398,8 @@ class _CartPageState extends State<CartPage> {
                   width: 90.h,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>
-                      Container(color: Colors.grey[200]),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                      placeHolderWidget(height: 95.h),
+                  errorWidget: (context, url, error) => errorWidget(),
                 ),
               ),
               SizedBox(width: 12.w),
@@ -554,52 +481,55 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _buildTotalCheckout({required int total}) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 14.h),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.secondary, width: 1.h),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.r),
-                bottomLeft: Radius.circular(10.r),
+    return Container(
+      margin: EdgeInsets.only(bottom: 6.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 13.h),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.secondary, width: 1.h),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10.r),
+                  bottomLeft: Radius.circular(10.r),
+                ),
               ),
-            ),
-            child: Center(
-              child: Text(
-                (isLoading) ? "Total : ₹---" : "Total : ₹$total",
-                style: interTextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
+              child: Center(
+                child: Text(
+                  (isLoading) ? "Total : ₹---" : "Total : ₹$total",
+                  style: interTextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 15.h),
-            decoration: BoxDecoration(
-              color: AppColors.secondary,
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(10.r),
-                bottomRight: Radius.circular(10.r),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 14.h),
+              decoration: BoxDecoration(
+                color: AppColors.secondary,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10.r),
+                  bottomRight: Radius.circular(10.r),
+                ),
               ),
-            ),
-            child: Center(
-              child: Text(
-                "Checkout",
-                style: interTextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              child: Center(
+                child: Text(
+                  "Checkout",
+                  style: interTextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

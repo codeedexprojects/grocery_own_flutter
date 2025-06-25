@@ -4,19 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grocery/Common/colors.dart';
 import 'package:grocery/Features/bottom%20bar/view%20model/tab_index_view_model.dart';
 import 'package:grocery/Features/cart/view/cart_page.dart';
+import 'package:grocery/Features/category/view/category_page.dart';
 import 'package:grocery/Features/home/view/home_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-class CategoryScreen extends StatelessWidget {
-  const CategoryScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text("Category Screen", style: TextStyle(fontSize: 20.sp)),
-    );
-  }
-}
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key});
@@ -25,11 +15,7 @@ class BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final vmodel = Get.put(BottomBarTabIndex());
 
-    final List<Widget> screens = const [
-      HomePage(),
-      CategoryScreen(),
-      CartPage(),
-    ];
+    final List<Widget> screens = const [HomePage(), CategoryPage(), CartPage()];
 
     return Obx(
       () => Scaffold(

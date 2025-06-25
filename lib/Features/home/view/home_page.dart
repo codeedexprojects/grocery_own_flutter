@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:grocery/Common/colors.dart';
+import 'package:grocery/Common/fonts.dart';
+import 'package:grocery/Common/text_field_decoration.dart';
+import 'package:grocery/Features/home/view/widget/category_section.dart';
+import 'package:grocery/Features/home/view/widget/grocery_and_kitchen_section.dart';
+import 'package:grocery/Features/home/view/widget/monthly_essential_sale_section.dart';
+import 'package:grocery/Features/home/view/widget/order_again_section.dart';
+import 'package:grocery/Features/home/view/widget/running_text_banner.dart';
+import 'package:grocery/Features/home/view/widget/seasonal_product_section.dart';
+import 'package:grocery/Features/home/view/widget/snacks_and_drinks_section.dart';
+import 'package:grocery/Features/home/view/widget/this_month_must_have.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:marquee/marquee.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,27 +30,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
+      if (!mounted) return; // prevents calling setState after dispose
       setState(() => isLoading = false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final categories = [
-      {"title": "Fruits", "image": "assets/sample/Fruits.png"},
-      {"title": "Snacks", "image": "assets/sample/SnaksCheetos.png"},
-      {"title": "Frozen food", "image": "assets/sample/frozen.png"},
-      {"title": "Snacks", "image": "assets/sample/SnaksCheetos.png"},
-      {"title": "Frozen food", "image": "assets/sample/frozen.png"},
-      {"title": "Stationary", "image": "assets/sample/stationary.png"},
-      {"title": "Snacks", "image": "assets/sample/SnaksCheetos.png"},
-      {"title": "Frozen food", "image": "assets/sample/frozen.png"},
-      {"title": "Stationary", "image": "assets/sample/stationary.png"},
-      {"title": "Snacks", "image": "assets/sample/SnaksCheetos.png"},
-      {"title": "Frozen food", "image": "assets/sample/frozen.png"},
-      {"title": "Stationary", "image": "assets/sample/stationary.png"},
-    ];
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -55,29 +54,32 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 12.h),
               _buildDotsIndicator(),
               SizedBox(height: 20.h),
-              Text(
-                "Categories",
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 12.h),
-              SizedBox(
-                height: 100.h,
-                child: isLoading
-                    ? _shimmerCategoryList()
-                    : ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: categories.length,
-                        itemBuilder: (context, index) {
-                          final category = categories[index];
-                          return _buildCategoryItem(
-                            category["title"]!,
-                            category["image"]!,
-                          );
-                        },
-                      ),
-              ),
+              CategorySection(isLoading: isLoading),
               SizedBox(height: 20.h),
-              isLoading ? _shimmerBanner() : _secondBanner(),
+              isLoading
+                  ? _shimmerBanner()
+                  : RunningBanner(
+                      bannerImage: "assets/sample/banner1.jpg",
+                      bannerText:
+                          "Enjoy FREE Delivery on all orders from 4 PM to 5 PM — don’t miss out!",
+                    ),
+              SizedBox(height: 20.h),
+              OrderAgainList(),
+              SizedBox(height: 20.h),
+              // Grocery & Kitchen
+              GroceryAndKitchenSection(),
+              SizedBox(height: 20.h),
+              //Snacks & Drinks
+              SnacksAndDrinksSection(),
+              SizedBox(height: 20.h),
+              // Seasonal Products
+              SeasonalProductsSection(),
+              SizedBox(height: 20.h),
+              // Monthly Esssential Sale
+              MonthlyEssentialSaleSection(),
+              SizedBox(height: 20.h),
+              ThisMonthMustHave(),
+              SizedBox(height: 20.h),
             ],
           ),
         ),
@@ -88,18 +90,26 @@ class _HomePageState extends State<HomePage> {
   Widget _buildHeader() {
     return Row(
       children: [
-        Icon(Icons.person_pin, size: 24.sp),
-        SizedBox(width: 8.w),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Delivery in 10 mins",
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primary,
-              ),
+            Row(
+              children: [
+                Image.asset(
+                  'assets/icons/person.png',
+                  width: 24.w,
+                  height: 24.w,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  "Delivery in 10 mins",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 2.h),
             Row(
@@ -129,22 +139,10 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSearchField() {
     return TextField(
-      decoration: InputDecoration(
-        hintText: 'Search your product',
-        prefixIcon: Icon(Icons.search),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-      ),
+      onChanged: (value) {
+        // Handle search input changes
+      },
+      decoration: customSearchInputDecoration(hint: "Search for products"),
     );
   }
 
@@ -160,55 +158,20 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _secondBanner() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12.r),
-      child: Image.asset(
-        "assets/sample/banner1.jpg",
-        height: 180.h,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
   Widget _buildDotsIndicator() {
     return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(
-          4,
-          (index) => Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Icon(
-              Icons.circle,
-              size: 6.sp,
-              color: index == 0 ? Colors.green : Colors.grey.shade300,
-            ),
-          ),
+      child: SmoothPageIndicator(
+        controller: PageController(),
+        count: 3,
+        effect: const ExpandingDotsEffect(
+          dotWidth: 8.0,
+          dotHeight: 8.0,
+          activeDotColor: AppColors.primary,
+          dotColor: Colors.grey,
         ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryItem(String title, String imagePath) {
-    return Padding(
-      padding: EdgeInsets.only(right: 12.w),
-      child: Column(
-        children: [
-          Container(
-            height: 70.h,
-            width: 70.h,
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFEAA5),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Image.asset(imagePath, fit: BoxFit.contain),
-          ),
-          SizedBox(height: 4.h),
-          Text(title, style: TextStyle(fontSize: 12.sp)),
-        ],
+        onDotClicked: (index) {
+          // Handle dot click
+        },
       ),
     );
   }
@@ -223,38 +186,6 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-        ),
-      ),
-    );
-  }
-
-  Widget _shimmerCategoryList() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: 6,
-      itemBuilder: (context, index) => Padding(
-        padding: EdgeInsets.only(right: 12.w),
-        child: Column(
-          children: [
-            Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              child: Container(
-                height: 70.h,
-                width: 70.h,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
-              child: Container(width: 50.w, height: 10.h, color: Colors.white),
-            ),
-          ],
         ),
       ),
     );
